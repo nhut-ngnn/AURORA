@@ -9,7 +9,7 @@ AURORA is a multimodal speech emotion recognition repository. The model combines
 - Teacher-student training with clean-text teacher and ASR-text student.
 - Audio-guided gated fusion, cross-modal encoders, uncertainty gating, and residual text repair.
 - Evaluation utilities for audio + clean text and audio + ASR text test modes.
-- Dataset preprocessing support for IEMOCAP, ESD, and MSP-IMPROV.
+- Dataset preprocessing support for IEMOCAP and MSP-IMPROV.
 
 ## Repository Structure
 
@@ -43,7 +43,6 @@ Preprocess raw datasets into `metadata/<DATASET>_preprocessed/{train,val,test}.p
 ```bash
 python trainer/preprocess.py --dataset IEMOCAP --data_root /path/to/IEMOCAP
 python trainer/preprocess.py --dataset MSP-IMPROV --data_root /path/to/MSP-IMPROV
-python trainer/preprocess.py --dataset ESD --data_root /path/to/ESD
 ```
 
 Each metadata sample stores an audio path, transcript text when available, and an emotion label.

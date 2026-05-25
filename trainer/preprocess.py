@@ -26,14 +26,6 @@ LABEL_MAP_4 = {
     "exc": 1 
 }
 
-LABEL_MAP_ESD = {
-    "Angry": 0,
-    "Happy": 1,
-    "Neutral": 2,
-    "Sad": 3,
-    "Surprise": 4
-}
-
 LABEL_MAP_MSP_IMPROV = {
     "A": 0,  # Angry
     "H": 1,  # Happy
@@ -170,64 +162,6 @@ def preprocess_iemocap(args):
     logging.info(f"Train: {len(train_samples)} | Val: {len(val_samples)} | Test: {len(test_samples)}")
     logging.info(f"Saved preprocessed data to {output_dir}")
 
-def preprocess_esd(args):
-    data_root = args.data_root
-    ignore_length = args.ignore_length
-    seed = args.seed
-
-    speaker_dirs = [
-        os.path.join(data_root, spk)
-        for spk in os.listdir(data_root)
-        if spk.isdigit() and 11 <= int(spk) <= 20
-    ]
-    samples = []
-
-    for spk_dir in tqdm.tqdm(speaker_dirs, desc="Processing ESD English"):
-        for emo in os.listdir(spk_dir):
-            emo_path = os.path.join(spk_dir, emo)
-            if not os.path.isdir(emo_path):
-                continue
-
-            if emo not in LABEL_MAP_ESD:
-                continue
-
-            label = LABEL_MAP_ESD[emo]
-            wav_files = glob.glob(os.path.join(emo_path, "*.wav"))
-
-            for wav_path in wav_files:
-                try:
-                    wav_data, _ = sf.read(wav_path, dtype="int16")
-                except Exception:
-                    logging.warning(f"Cannot read {wav_path}")
-                    continue
-
-                if len(wav_data) < ignore_length:
-                    logging.warning(f"Ignored short sample: {wav_path}")
-                    continue
-
-                text = ""  
-                samples.append((wav_path, text, label))
-
-    random.Random(seed).shuffle(samples)
-
-    labels = [s[2] for s in samples]
-    train, test_samples = train_test_split(samples, test_size=0.2, random_state=seed, stratify=labels)
-    val_samples, test_samples = train_test_split(test_samples, test_size=0.5, random_state=seed,
-                                                stratify=[s[2] for s in test_samples])
-
-    output_dir = "metadata/ESD_preprocessed"
-    os.makedirs(output_dir, exist_ok=True)
-    with open(os.path.join(output_dir, "train.pkl"), "wb") as f:
-        pickle.dump(train, f)
-    with open(os.path.join(output_dir, "val.pkl"), "wb") as f:
-        pickle.dump(val_samples, f)
-    with open(os.path.join(output_dir, "test.pkl"), "wb") as f:
-        pickle.dump(test_samples, f)
-
-    logging.info(f"Train: {len(train)} | Val: {len(val_samples)} | Test: {len(test_samples)}")
-    logging.info(f"Saved preprocessed data to {output_dir}")
-
-
 def preprocess_msp_improv(args):
     data_root = args.data_root
     ignore_length = args.ignore_length
@@ -305,7 +239,7 @@ def preprocess_msp_improv(args):
 
 def arg_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset", type=str, choices=["IEMOCAP", "ESD", "MSP-IMPROV"], required=True)
+    parser.add_argument("--dataset", type=str, choices=["IEMOCAP", "MSP-IMPROV"], required=True)
     parser.add_argument("--data_root", type=str, required=True, help="Root path to dataset")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--ignore_length", type=int, default=0)
@@ -315,7 +249,5 @@ if __name__ == "__main__":
     args = arg_parser()
     if args.dataset == "IEMOCAP":
         preprocess_iemocap(args)
-    elif args.dataset == "ESD":
-        preprocess_esd(args)
     elif args.dataset == "MSP-IMPROV":
         preprocess_msp_improv(args)

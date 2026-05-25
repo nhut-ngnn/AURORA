@@ -23,13 +23,11 @@ from src.architecture.configs.asr_models import ASR_MODEL_CONFIGS, DEFAULT_ASR_M
 
 DATASET_PREFIXES = {
     "IEMOCAP": "IEMOCAP",
-    "ESD": "ESD",
     "MSP-IMPROV": "MSPIMPROV",
 }
 
 DATASET_METADATA_DIRS = {
     "IEMOCAP": "IEMOCAP_preprocessed",
-    "ESD": "ESD_preprocessed",
     "MSP-IMPROV": "MSP-IMPROV_preprocessed",
 }
 

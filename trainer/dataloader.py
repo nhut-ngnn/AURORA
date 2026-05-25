@@ -6,7 +6,6 @@ from src.training_process.data_io import build_feature_paths, load_pkl
 
 DATASET_CONFIG = {
     "IEMOCAP": {"num_classes": 4, "feature_prefix": "IEMOCAP_BERT_WAV2VEC"},
-    "ESD": {"num_classes": 5, "feature_prefix": "ESD_BERT_WAV2VEC"},
     "MSP-IMPROV": {"num_classes": 4, "feature_prefix": "MSPIMPROV_BERT_WAV2VEC"},
 }
 
